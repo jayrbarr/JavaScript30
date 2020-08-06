@@ -177,31 +177,20 @@
     <li data-time="1:56">
       Video 57
     </li>
-    <li data-time="4:04">
+    <li data-time="5:06">
       Video 58
     </li>
   </ul>
 <script>
-
-  const timeNodes = Array.from(document.querySelectorAll('[data-time]'));
-
-  const seconds = timeNodes
-    .map(node => node.dataset.time)
-    .map(timeCode => {
-      const [mins, secs] = timeCode.split(':').map(parseFloat);
-      return (mins * 60) + secs;
-    })
-    .reduce((total, vidSeconds) => total + vidSeconds);
-
-    let secondsLeft = seconds;
-    const hours = Math.floor(secondsLeft / 3600);
-    secondsLeft = secondsLeft % 3600;
-
-    const mins = Math.floor(secondsLeft / 60);
-    secondsLeft = secondsLeft % 60;
-
-    console.log(hours, mins, secondsLeft);
-
+  const timeNodes = [...document.querySelectorAll('[data-time]')];
+  let seconds = timeNodes.reduce((total, node) => {
+    const [minutes, secs] = node.dataset.time.split(':').map(parseFloat);
+    return total + minutes * 60 + secs;
+  }, 0);
+  const hours = Math.floor(seconds/3600);
+  const minutes = Math.floor((seconds - hours*3600)/60);
+  seconds -= hours*3600 + minutes*60;
+  console.log(`${hours} hours, ${minutes} minutes and ${seconds} seconds.`);
 </script>
 </body>
 </html>
