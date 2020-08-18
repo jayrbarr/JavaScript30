@@ -54,8 +54,45 @@
   </div>
 
 <script>
+    function debounce(func, wait = 20, immediate = true) {
+    var timeout;
+    return function () {
+      var context = this, args = arguments;
+      var later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  }
+
+  const sliderImages = document.querySelectorAll('.slide-in');
   const nav = document.querySelector('#main');
+  const header = document.querySelector('header');
   let topOfNav = nav.offsetTop;
+
+  function checkSlide(e) {
+    sliderImages.forEach(sliderImage => {
+      const pad = nav.offsetHeight + header.offsetHeight;
+      const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2 - pad;
+      const imageBottom = sliderImage.offsetTop + sliderImage.height;
+      const isHalfShown = slideInAt > sliderImage.offsetTop;
+      const isNotScrolledPast = window.scrollY < imageBottom + pad;
+      console.log(window.scrollY, window.innerHeight, slideInAt, imageBottom, isHalfShown, isNotScrolledPast);
+      if (isHalfShown && isNotScrolledPast) {
+        sliderImage.classList.add('active');
+      } else {
+        sliderImage.classList.remove('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', debounce(checkSlide));
+
+
 
   function fixNav() {
     if (window.scrollY >= topOfNav) {
